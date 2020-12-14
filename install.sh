@@ -36,7 +36,7 @@ get_distribution
 if [[ "$lsb_dist" = "ubuntu" || "$lsb_dist" = "debian" ]]; then
   echo "install with deb"
   arch="aarch64"
-  curl -L "https://github.com/vmonitor/monitoring/releases/download/${VERSION}/telegraf-1.16.0.1a3d8d7e-0.${arch}.rpm" -o /tmp/telegraf_temp.deb
+  curl -L "https://github.com/vmonitor/monitoring/releases/download/${VERSION}/telegraf_1.16.0.c50103a7-0_amd64.deb" -o /tmp/telegraf_temp.deb
   dpkg -i /tmp/telegraf_temp.deb
   set_environment
   service telegraf restart
