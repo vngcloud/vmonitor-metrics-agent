@@ -1,43 +1,117 @@
 #!/bin/bash
-  
+
 VERSION=0.2
+TELEGRAF_VERSION=1.16.0
+BASE_URL="https://github.com/vmonitor/monitoring/releases/download"
 
-is_64_arch(){
-  arch_os=$(uname -i)
-  if [ $arch_os -z "x86_64" ]
-  then
-    return true
-  else
-    return false
-  fi
-}
-
-get_distribution() {
-  lsb_dist=""
-  # Every system that we officially support has /etc/os-release
-  if [ -r /etc/os-release ]; then
-    lsb_dist="$(. /etc/os-release && echo "$ID_LIKE")"
-  fi
-  # Returning an empty string here should be alright since the
-  # case statements don't act unless you provide an actual value
-}
-
-command_exists() {
-  command -v "$@" > /dev/null 2>&1
-}
-
-set_environment() {
-  list_env=( $API_KEY )
-  printf "%s\n" "${list_env[@]}" > /etc/default/telegraf
-}
-
-get_distribution
-
-if [[ "$lsb_dist" = "ubuntu" || "$lsb_dist" = "debian" ]]; then
-  echo "install with deb"
-  arch="aarch64"
-  curl -L "https://github.com/vmonitor/monitoring/releases/download/${VERSION}/telegraf_1.16.0.c50103a7-0_amd64.deb" -o /tmp/telegraf_temp.deb
-  dpkg -i /tmp/telegraf_temp.deb
-  set_environment
-  service telegraf restart
+if [ ! $API_KEY ]; then
+  printf "\033[31mAPI key not available in API_KEY environment variable.\033[0m\n"
+  exit 1;
+# else
+#   API_KEY="API_KEY=$API_KEY"
+#   list_env=( $API_KEY )
+#   printf "%s\n" "${list_env[@]}" > /etc/default/telegraf
 fi
+
+KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
+DISTRIBUTION=$(lsb_release -d 2>/dev/null | grep -Eo $KNOWN_DISTRIBUTION  || grep -Eo $KNOWN_DISTRIBUTION /etc/issue 2>/dev/null || grep -Eo $KNOWN_DISTRIBUTION /etc/Eos-release 2>/dev/null || grep -m1 -Eo $KNOWN_DISTRIBUTION /etc/os-release 2>/dev/null || uname -s)
+
+if [ $DISTRIBUTION = "Darwin" ]; then
+  printf "\033[31mThis script does not support installing on the Mac."
+  exit 1;
+elif [ -f /etc/debian_version -o "$DISTRIBUTION" == "Debian" -o "$DISTRIBUTION" == "Ubuntu" ]; then
+    OS="Debian"
+elif [ -f /etc/redhat-release -o "$DISTRIBUTION" == "RedHat" -o "$DISTRIBUTION" == "CentOS" -o "$DISTRIBUTION" == "Amazon" ]; then
+    OS="RedHat"
+# Some newer distros like Amazon may not have a redhat-release file
+elif [ -f /etc/system-release -o "$DISTRIBUTION" == "Amazon" ]; then
+    OS="RedHat"
+# Arista is based off of Fedora14/18 but do not have /etc/redhat-release
+elif [ -f /etc/Eos-release -o "$DISTRIBUTION" == "Arista" ]; then
+    OS="RedHat"
+# openSUSE and SUSE use /etc/SuSE-release
+elif [ -f /etc/SuSE-release -o "$DISTRIBUTION" == "SUSE" -o "$DISTRIBUTION" == "openSUSE" ]; then
+    OS="SUSE"
+fi
+
+# Root user detection
+if [ $(echo "$UID") = "0" ]; then
+    sudo_cmd=''
+else
+    sudo_cmd='sudo'
+fi
+
+# command_exists() {
+# 	command -v "$@" > /dev/null 2>&1
+# }
+
+# Install the necessary package sources
+if [ $OS = "RedHat" ]; then
+    echo -e "\033[34m\n* Installing RPM sources for vMonitor\n\033[0m"
+
+    UNAME_M=$(uname -m)
+    if [ "$UNAME_M"  == "i686" -o "$UNAME_M"  == "i386" -o "$UNAME_M"  == "x86" ]; then
+        ARCHI="i386"
+    else
+        ARCHI="x86_64"
+    fi
+
+    printf "\033[34m* Installing the vMonitor Agent package\n\033[0m\n"
+
+    PACKAGE_NAME="telegraf_${TELEGRAF_VERSION}-${ARCHI}.rpm"
+    URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
+    echo $URI
+    curl -L $URI -o /tmp/$PACKAGE_NAME
+
+    $sudo_cmd rpm -i /tmp/$PACKAGE_NAME
+
+elif [ $OS = "Debian" ]; then
+    printf "\033[34m\n* Installing the vMonitor Agent package\n\033[0m\n"
+    ARCHI=$(dpkg --print-architecture)
+  
+    PACKAGE_NAME="telegraf_${TELEGRAF_VERSION}-${ARCHI}.deb"
+    URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
+    echo $URI
+    curl -L $URI -o /tmp/$PACKAGE_NAME
+    # curl -L "$BASE_URL/${VERSION}/${PACKAGE_NAME}" -o /tmp/$PACKAGE_NAME
+    $sudo_cmd dpkg -i /tmp/$PACKAGE_NAME
+    ERROR_MESSAGE=""
+
+else
+    printf "\033[31mYour OS or distribution are not supported by this install script.
+Please follow the instructions on the Agent setup page:
+    https://app.vngcloud.vn/account/settings#agent\033[0m\n"
+    exit;
+fi
+
+# Set the configuration
+printf "\033[34m\n* Adding your API key to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
+API_KEY="API_KEY=$API_KEY"
+list_env=( $API_KEY )
+$sudo_cmd printf "%s\n" "${list_env[@]}" > /etc/default/telegraf
+
+# restart agent
+printf "\033[34m* Starting the Agent...\n\033[0m\n"
+service telegraf restart
+
+# Wait for metrics
+printf "\033[32m
+Your Agent has started up for the first time.
+at:
+    https://vmonitor.vngcloud.vn/infrastructure\033[0m
+Waiting for metrics..."
+
+telegraf -test
+
+# Metrics are submitted, echo some instructions and exit
+printf "\033[32m
+Your Agent is running and functioning properly. It will continue to run in the
+background and submit metrics to vMonitor.
+If you ever want to stop the Agent, run:
+    sudo service stop telegraf
+And to run it again run:
+    sudo service start telegraf
+API_KEY:
+    /etc/telegraf/telegraf.conf
+    /etc/default/telegraf
+\033[0m"
