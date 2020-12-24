@@ -1,6 +1,5 @@
 #!/bin/bash
 
-VERSION=0.2
 TELEGRAF_VERSION=1.16.0
 BASE_URL="https://github.com/vmonitor/monitoring/releases/download"
 
