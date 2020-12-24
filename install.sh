@@ -69,7 +69,7 @@ elif [ $OS = "Debian" ]; then
     printf "\033[34m\n* Installing the vMonitor Agent package\n\033[0m\n"
     ARCHI=$(dpkg --print-architecture)
   
-    PACKAGE_NAME="telegraf_${TELEGRAF_VERSION}-${ARCHI}.deb"
+    PACKAGE_NAME="telegraf_nightly_${ARCHI}.deb"
     URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
     echo $URI
     curl -L $URI -o /tmp/$PACKAGE_NAME
