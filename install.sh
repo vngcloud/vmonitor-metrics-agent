@@ -12,6 +12,12 @@ if [ ! $API_KEY ]; then
 #   printf "%s\n" "${list_env[@]}" > /etc/default/telegraf
 fi
 
+if [ ! $VMONITOR_SITE ]; then
+  printf "\033[31mSITE not available in VMONITOR_SITE environment variable.\033[0m\n"
+  printf "\033[31mDefault site is monitoring-agent.vngcloud.vn"
+  VMONITOR_SITE=monitoring-agent.vngcloud.vn
+fi
+
 KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
 DISTRIBUTION=$(lsb_release -d 2>/dev/null | grep -Eo $KNOWN_DISTRIBUTION  || grep -Eo $KNOWN_DISTRIBUTION /etc/issue 2>/dev/null || grep -Eo $KNOWN_DISTRIBUTION /etc/Eos-release 2>/dev/null || grep -m1 -Eo $KNOWN_DISTRIBUTION /etc/os-release 2>/dev/null || uname -s)
 
@@ -86,12 +92,14 @@ fi
 # Set the configuration
 printf "\033[34m\n* Adding your API key to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
 API_KEY="API_KEY=$API_KEY"
-list_env=( $API_KEY )
-$sudo_cmd printf "%s\n" "${list_env[@]}" > /etc/default/telegraf
+VMONITOR_SITE="VMONITOR_SITE=$VMONITOR_SITE"
+
+list_env=( $API_KEY $VMONITOR_SITE)
+printf "%s\n" "${list_env[@]}" | $sudo_cmd tee /etc/default/telegraf
 
 # restart agent
 printf "\033[34m* Starting the Agent...\n\033[0m\n"
-service telegraf restart
+$sudo_cmd service telegraf restart
 
 # Wait for metrics
 printf "\033[32m
@@ -99,8 +107,10 @@ Your Agent has started up for the first time.
 at:
     https://vmonitor.vngcloud.vn/infrastructure\033[0m
 Waiting for metrics..."
+export API_KEY=$API_KEY
+export VMONITOR_SITE=$VMONITOR_SITE
 
-telegraf -test
+telegraf --once
 
 # Metrics are submitted, echo some instructions and exit
 printf "\033[32m
