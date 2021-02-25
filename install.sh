@@ -91,6 +91,11 @@ fi
 
 # Set the configuration
 printf "\033[34m\n* Adding your API key to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
+
+API_KEY_TEMP="$API_KEY"
+VMONITOR_SITE_TEMP="$VMONITOR_SITE"
+
+
 API_KEY="API_KEY=$API_KEY"
 VMONITOR_SITE="VMONITOR_SITE=$VMONITOR_SITE"
 
@@ -107,8 +112,9 @@ Your Agent has started up for the first time.
 at:
     https://vmonitor.vngcloud.vn/infrastructure\033[0m
 Waiting for metrics..."
-export API_KEY=$API_KEY
-export VMONITOR_SITE=$VMONITOR_SITE
+
+export API_KEY=$API_KEY_TEMP
+export VMONITOR_SITE=$VMONITOR_SITE_TEMP
 
 telegraf --once
 
