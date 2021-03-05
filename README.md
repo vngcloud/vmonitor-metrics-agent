@@ -7,7 +7,7 @@ VERSION=1.16.0-1.0 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubu
 
 > download https://github.com/vmonitor/monitoring/releases
 
-# Running Telegraf as a Windows Service
+## Running Telegraf as a Windows Service
 
 Telegraf natively supports running as a Windows Service. Outlined below is are
 the general steps to set it up.
