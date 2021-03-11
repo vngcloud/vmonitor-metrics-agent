@@ -7,10 +7,10 @@ VERSION=1.16.0-1.0 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubu
 
 ```
    [[outputs.vcmc]]
-      url = "https://${VMONITOR_SITE}"
+      url = "https://<VMONITOR_SITE>"
       insecure_skip_verify = false
       data_format = "vcmc"
-      api_key = "${API_KEY}"
+      api_key = "<API_KEY>"
 ```
 
 > download https://github.com/vmonitor/monitoring/releases
