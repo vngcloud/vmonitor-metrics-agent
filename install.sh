@@ -43,7 +43,7 @@ fi
 if [ $(echo "$UID") = "0" ]; then
     sudo_cmd=''
 else
-    sudo_cmd='sudo'
+    sudo_cmd='sudo - root -c'
 fi
 
 # command_exists() {
