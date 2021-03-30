@@ -5,18 +5,22 @@
 VERSION=1.16.0-1.0 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubusercontent.com/vmonitor/monitoring/main/install.sh)"
 ```
 2. config
-> /etc/telegraf/telegraf.conf
 
-> /etc/default/telegraf
+```sh
+/etc/telegraf/telegraf.conf
+/etc/default/telegraf
+```
 
 3. start telegraf
-Linux (sysvinit and upstart installations)
+- Linux (sysvinit and upstart installations)
+```sh
+sudo service telegraf start
+```
 
-> sudo service telegraf start
-
-Linux (systemd installations)
-
-> systemctl start telegraf
+- Linux (systemd installations)
+```sh
+systemctl start telegraf
+```
 
 # windows
 
