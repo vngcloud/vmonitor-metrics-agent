@@ -42,8 +42,8 @@ fi
 # Root user detection
 if [ $(echo "$UID") = "0" ]; then
     sudo_cmd=''
-else
-    sudo_cmd='sudo - root -c'
+    echo "Run as root" >&2
+    exit 1
 fi
 
 # command_exists() {
