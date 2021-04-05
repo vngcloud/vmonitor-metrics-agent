@@ -42,8 +42,8 @@ fi
 # Root user detection
 if [ $(echo "$UID") = "0" ]; then
     sudo_cmd=''
-    echo "Run as root" >&2
-    exit 1
+    printf "\033[31mRun install.sh as root.\033[0m\n"
+    exit 1;
 fi
 
 # command_exists() {
