@@ -14,7 +14,7 @@ fi
 
 if [ ! $VMONITOR_SITE ]; then
   printf "\033[31mSITE not available in VMONITOR_SITE environment variable.\033[0m\n"
-  printf "\033[31mDefault site is monitoring-agent.vngcloud.vn\n"
+  printf "\033[31mDefault site is monitoring-agent.vngcloud.vn\033[0m\n"
   VMONITOR_SITE=monitoring-agent.vngcloud.vn
 fi
 
