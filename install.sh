@@ -40,7 +40,7 @@ elif [ -f /etc/SuSE-release -o "$DISTRIBUTION" == "SUSE" -o "$DISTRIBUTION" == "
 fi
 
 # Root user detection
-if [ $(echo "$UID") = "0" ]; then
+if [[ $(echo "$UID") -ne 0 ]]; then
     sudo_cmd=''
     printf "\033[31mRun install.sh as root.\033[0m\n"
     exit 1;
