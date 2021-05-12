@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TELEGRAF_VERSION=1.16.0
+TELEGRAF_VERSION=1.18.0
 BASE_URL="https://github.com/vmonitor/monitoring/releases/download"
 
 if [ ! $API_KEY ]; then
