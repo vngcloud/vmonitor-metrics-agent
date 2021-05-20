@@ -63,7 +63,7 @@ if [ $OS = "RedHat" ]; then
 
     printf "\033[34m* Installing the vMonitor Agent package\n\033[0m\n"
 
-    PACKAGE_NAME="telegraf_nightly_${ARCHI}.rpm"
+    PACKAGE_NAME="telegraf-nightly_${ARCHI}.rpm"
     URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
     echo $URI
     curl -L $URI -o /tmp/$PACKAGE_NAME
