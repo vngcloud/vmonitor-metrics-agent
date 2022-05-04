@@ -123,9 +123,9 @@ printf "\033[32m
 Your Agent is running and functioning properly. It will continue to run in the
 background and submit metrics to vMonitor.
 If you ever want to stop the Agent, run:
-    sudo service stop telegraf
+    sudo service telegraf stop
 And to run it again run:
-    sudo service start telegraf
+    sudo service telegraf start
 API_KEY:
     /etc/telegraf/telegraf.conf
     /etc/default/telegraf
