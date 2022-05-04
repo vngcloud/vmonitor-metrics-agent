@@ -3,7 +3,7 @@
 1. install
 
     ```sh
-    VERSION=1.18.0-1.0.2 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubusercontent.com/vmonitor/monitoring/main/install.sh)"
+    VERSION=1.18.0-1.0.2 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
     ```
 2. config
 
@@ -33,7 +33,7 @@
       api_key = "<API_KEY>"
 ```
 
-> download https://github.com/vmonitor/monitoring/releases
+> download https://github.com/vngcloud/vmonitor-metrics-agent/releases
 
 ## Running Telegraf as a Windows Service
 
