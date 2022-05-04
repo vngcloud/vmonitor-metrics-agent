@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TELEGRAF_VERSION=1.18.0
-BASE_URL="https://github.com/vmonitor/monitoring/releases/download"
+BASE_URL="https://github.com/vngcloud/vmonitor-metrics-agent/releases/download"
 
 if [ ! $API_KEY ]; then
   printf "\033[31mAPI key not available in API_KEY environment variable.\033[0m\n"
