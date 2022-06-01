@@ -105,7 +105,7 @@ list_env=( $API_KEY $VMONITOR_SITE)
 printf "%s\n" "${list_env[@]}" | $sudo_cmd tee /etc/default/telegraf
 
 # Backward compatible with vcmc
-if [ -f "/etc/telegraf/telegraf.conf" ]; then
+if [ -f "/etc/telegraf/telegraf.conf" && $VERSION ~= "VERSION=1.18.0-1.0." ]; then
   sed -i "s/vcmc/vngcloud_vmonitor/g" /etc/telegraf/telegraf.conf
 fi
 
