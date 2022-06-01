@@ -26,10 +26,10 @@
 # windows
 
 ```
-   [[outputs.vcmc]]
+   [[outputs.vngcloud_vmonitor]]
       url = "https://<VMONITOR_SITE>"
       insecure_skip_verify = false
-      data_format = "vcmc"
+      data_format = "vngcloud_vmonitor"
       api_key = "<API_KEY>"
 ```
 
