@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TELEGRAF_VERSION=1.18.0
+VERSION=1.23.0
 BASE_URL="https://github.com/vngcloud/vmonitor-metrics-agent/releases/download"
 
 if [ ! $API_KEY ]; then
