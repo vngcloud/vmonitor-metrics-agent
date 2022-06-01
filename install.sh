@@ -1,15 +1,17 @@
 #!/bin/bash
 
-VERSION=1.23.0
+DEFAULT_VERSION=1.23.0-1.0.0
 BASE_URL="https://github.com/vngcloud/vmonitor-metrics-agent/releases/download"
+
+if [ ! $VERSION ]; then
+  printf "\033[31mVERSION environment variable not available.\033[0m\n"
+  printf "\033[31mDefault VERSION is $DEFAULT_VERSION.\033[0m\n"
+  VERSION=$DEFAULT_VERSION
+fi
 
 if [ ! $API_KEY ]; then
   printf "\033[31mAPI key not available in API_KEY environment variable.\033[0m\n"
   exit 1;
-# else
-#   API_KEY="API_KEY=$API_KEY"
-#   list_env=( $API_KEY )
-#   printf "%s\n" "${list_env[@]}" > /etc/default/telegraf
 fi
 
 if [ ! $VMONITOR_SITE ]; then
@@ -101,6 +103,11 @@ VMONITOR_SITE="VMONITOR_SITE=$VMONITOR_SITE"
 
 list_env=( $API_KEY $VMONITOR_SITE)
 printf "%s\n" "${list_env[@]}" | $sudo_cmd tee /etc/default/telegraf
+
+# Backward compatible with vcmc
+if [ -f "/etc/telegraf/telegraf.conf" ]; then
+  sed -i "s/vcmc/vngcloud_vmonitor/g" /etc/telegraf/telegraf.conf
+fi
 
 # restart agent
 printf "\033[34m* Starting the Agent...\n\033[0m\n"
