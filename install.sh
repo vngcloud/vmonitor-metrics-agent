@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEFAULT_VERSION=1.23.0-1.1.0
+DEFAULT_VERSION=1.23.0-1.3.0
 BASE_URL="https://github.com/vngcloud/vmonitor-metrics-agent/releases/download"
 
 if [ ! $VERSION ]; then
