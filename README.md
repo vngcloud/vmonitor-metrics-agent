@@ -1,29 +1,49 @@
-# linux
+# Linux
 
-1. install
+## Install with default config
 
-    ```sh
-    VERSION=1.23.0-1.4.0 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
-    ```
-2. config
+   ```shell
+   VMONITOR_SITE=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx IAM_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx IAM_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx IAM_URL=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
+   ```
 
-    ```
+## Config file
+
+   Config file is stored in
+
+   ```sh
     /etc/telegraf/telegraf.conf
     /etc/default/telegraf
-    ```
+   ```
 
-3. start telegraf
-- Linux (sysvinit and upstart installations)
-  ```
-  sudo service telegraf start
-  ```
+## Start telegraf
 
-- Linux (systemd installations)
-  ```
-  systemctl start telegraf
-  ```
+   ```shell
+   # Linux (sysvinit and upstart installations)
+   sudo service telegraf start
 
-# windows
+   # Linux (systemd installations)
+   systemctl start telegraf
+   ```
+
+## Log telegraf
+
+   ```shell
+   systemctl status telegraf
+   ```
+
+   ```shell
+   journalctl -xeu telegraf.service
+   ```
+
+## Stop and remove telegraf
+
+   ```shell
+   systemctl stop telegraf
+   apt remove telegraf -y
+   rm /etc/telegraf/telegraf.conf
+   ```
+
+# Windows
 
 ```
    [[outputs.vngcloud_vmonitor]]
@@ -33,7 +53,7 @@
       api_key = "<API_KEY>"
 ```
 
-> download https://github.com/vngcloud/vmonitor-metrics-agent/releases
+> download <https://github.com/vngcloud/vmonitor-metrics-agent/releases>
 
 ## Running Telegraf as a Windows Service
 
@@ -66,8 +86,10 @@ the general steps to set it up.
 ## Config Directory
 
 You can also specify a `--config-directory` for the service to use:
+
 1. Create a directory for config snippets: `C:\Program Files\Telegraf\telegraf.d`
 2. Include the `--config-directory` option when registering the service:
+
    ```
    > C:\"Program Files"\Telegraf\telegraf.exe --service install --config C:\"Program Files"\Telegraf\telegraf.conf --config-directory C:\"Program Files"\Telegraf\telegraf.d
    ```
