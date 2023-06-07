@@ -3,7 +3,11 @@
 ## Install with default config
 
    ```shell
-   VMONITOR_SITE=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx IAM_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx IAM_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx IAM_URL=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
+   VMONITOR_SITE=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_URL=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
    ```
 
 ## Config file
