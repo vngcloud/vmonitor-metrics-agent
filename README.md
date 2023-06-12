@@ -1,31 +1,46 @@
-# Linux
+# Installation instruction for Linux
 
-## Install with default config
+## Installation
+
+The agent can be installed on Linux as easily as
+
+- Use `curl`:
 
    ```shell
-   VMONITOR_SITE=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   VMONITOR_SITE=monitoring-agent.vngcloud.vn \
    IAM_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
    IAM_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
-   IAM_URL=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_URL=https://iamapis.vngcloud.vn/accounts-api/v2/auth/token \
    bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
+   ```
+
+- Use `wget`:
+
+   ```shell
+   VMONITOR_SITE=monitoring-agent.vngcloud.vn \
+   IAM_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_URL=https://iamapis.vngcloud.vn/accounts-api/v2/auth/token \
+   bash -c "$(wget -O- https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
    ```
 
 ## Config file
 
-   Config file is stored in
-
-   ```sh
-    /etc/telegraf/telegraf.conf
-    /etc/default/telegraf
-   ```
+   Config file is stored in `/etc/telegraf/telegraf.conf` and `/etc/default/telegraf`
 
 ## Start telegraf
 
-   ```shell
-   # Linux (sysvinit and upstart installations)
-   sudo service telegraf start
+How to start Telegraf on Linux
 
-   # Linux (systemd installations)
+- Linux (sysvinit and upstart installations)
+
+   ```shell
+   sudo service telegraf start
+   ```
+
+- Linux (systemd installations)
+
+   ```shell
    systemctl start telegraf
    ```
 
@@ -39,13 +54,13 @@
    journalctl -xeu telegraf.service
    ```
 
-## Stop and remove telegraf
+<!-- ## Stop and remove telegraf
 
    ```shell
    systemctl stop telegraf
    apt remove telegraf -y
    rm /etc/telegraf/telegraf.conf
-   ```
+   ``` -->
 
 # Windows
 

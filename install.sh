@@ -1,6 +1,8 @@
 #!/bin/bash
 
 DEFAULT_VERSION=1.26.0-2.0.1
+DEFAULT_VMONITOR_SITE="monitoring-agent.vngcloud.vn"
+DEFAULT_IAM_URL="https://iamapis.vngcloud.vn/accounts-api/v2/auth/token"
 BASE_URL="https://github.com/vngcloud/vmonitor-metrics-agent/releases/download"
 
 if [ ! $VERSION ]; then
@@ -21,13 +23,14 @@ fi
 
 if [ ! $IAM_URL ]; then
   printf "\033[31mIAM_URL not available in IAM_URL environment variable.\033[0m\n"
-  exit 1;
+  printf "\033[31mDefault IAM_URL is $DEFAULT_IAM_URL.\033[0m\n"
+  IAM_URL=$DEFAULT_IAM_URL
 fi
 
 if [ ! $VMONITOR_SITE ]; then
-  printf "\033[31mSITE not available in VMONITOR_SITE environment variable.\033[0m\n"
-  printf "\033[31mDefault site is monitoring-agent.vngcloud.vn\033[0m\n"
-  VMONITOR_SITE=monitoring-agent.vngcloud.vn
+  printf "\033[31mVMONITOR_SITE not available in VMONITOR_SITE environment variable.\033[0m\n"
+  printf "\033[31mDefault site is $DEFAULT_VMONITOR_SITE.\033[0m\n"
+  VMONITOR_SITE=$DEFAULT_VMONITOR_SITE
 fi
 
 KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
