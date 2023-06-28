@@ -52,6 +52,20 @@ fi
 # 	command -v "$@" > /dev/null 2>&1
 # }
 
+if [ -e telegraf.conf ]
+then
+    a=1
+    CONF_FILE_BACKUP="telegraf.conf.backup-${a}"
+    while [ -e "${CONF_FILE_BACKUP}" ]
+    do
+    a=`expr $a + 1`
+        CONF_FILE_BACKUP="telegraf.conf.backup-${a}"
+    done
+
+    echo "Backup old config file to ${CONF_FILE_BACKUP}"
+    mv telegraf.conf "${CONF_FILE_BACKUP}"
+fi
+
 # Install the necessary package sources
 if [ $OS = "RedHat" ]; then
     echo -e "\033[34m\n* Installing RPM sources for vMonitor\n\033[0m"
