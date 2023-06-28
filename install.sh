@@ -65,6 +65,20 @@ fi
 # 	command -v "$@" > /dev/null 2>&1
 # }
 
+if [ -e telegraf.conf ]
+then
+    a=1
+    CONF_FILE_BACKUP="telegraf.conf.backup-${a}"
+    while [ -e "${CONF_FILE_BACKUP}" ]
+    do
+    a=`expr $a + 1`
+        CONF_FILE_BACKUP="telegraf.conf.backup-${a}"
+    done
+
+    echo "Backup old config file to ${CONF_FILE_BACKUP}"
+    mv telegraf.conf "${CONF_FILE_BACKUP}"
+fi
+
 # Install the necessary package sources
 if [ $OS = "RedHat" ]; then
     echo -e "\033[34m\n* Installing RPM sources for vMonitor\n\033[0m"
@@ -117,7 +131,7 @@ Please follow the instructions on the Agent setup page:
 fi
 
 # Set the configuration
-printf "\033[34m\n* Adding your API key to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
+printf "\033[34m\n* Adding ENV to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
 
 IAM_CLIENT_ID_TEMP="$IAM_CLIENT_ID"
 IAM_CLIENT_SECRET_TEMP="$IAM_CLIENT_SECRET"
