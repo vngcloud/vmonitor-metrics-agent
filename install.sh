@@ -65,18 +65,11 @@ fi
 # 	command -v "$@" > /dev/null 2>&1
 # }
 
-if [ -e "/etc/telegraf/telegraf.conf" ]
-then
-    a=1
-    CONF_FILE_BACKUP="telegraf.conf.backup-${a}"
-    while [ -e "/etc/telegraf/${CONF_FILE_BACKUP}" ]
-    do
-    a=`expr $a + 1`
-        CONF_FILE_BACKUP="telegraf.conf.backup-${a}"
-    done
-
-    echo "Backup old config file to ${CONF_FILE_BACKUP}"
-    mv /etc/telegraf/telegraf.conf "/etc/telegraf/${CONF_FILE_BACKUP}"
+# Upgrade config from API_KEY to IAM version
+if [ -e "/etc/telegraf/telegraf.conf" ]; then
+    if cat /etc/telegraf/telegraf.conf | grep -q "api_key = \"\${API_KEY\}\""; then
+        sed -i "s/api_key = \"\${API_KEY}\"/\nclient_id = \"\${IAM_CLIENT_ID}\"\n  client_secret = \"\${IAM_CLIENT_SECRET}\"\n  iam_url = \"\${IAM_URL}\"\n/g" /etc/telegraf/telegraf.conf
+    fi
 fi
 
 # Install the necessary package sources
