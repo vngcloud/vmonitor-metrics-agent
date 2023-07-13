@@ -3,7 +3,7 @@
 1. install
 
     ```sh
-    VERSION=1.23.0-1.4.0 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
+    VERSION=1.23.0-1.4.0 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/v1-stable/install.sh)"
     ```
 2. config
 
