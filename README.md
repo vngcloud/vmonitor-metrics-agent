@@ -1,29 +1,68 @@
-# linux
+# Installation instruction for Linux
 
-1. install
+## Installation
 
-    ```sh
-    VERSION=1.23.0-1.4.0 API_KEY=<YOUR API_KEY> bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
-    ```
-2. config
+The agent can be installed on Linux as easily as
 
-    ```
-    /etc/telegraf/telegraf.conf
-    /etc/default/telegraf
-    ```
+- Use `curl`:
 
-3. start telegraf
+   ```shell
+   VMONITOR_SITE=monitoring-agent.vngcloud.vn \
+   IAM_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_URL=https://iamapis.vngcloud.vn/accounts-api/v2/auth/token \
+   bash -c "$(curl -L https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
+   ```
+
+- Use `wget`:
+
+   ```shell
+   VMONITOR_SITE=monitoring-agent.vngcloud.vn \
+   IAM_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+   IAM_URL=https://iamapis.vngcloud.vn/accounts-api/v2/auth/token \
+   bash -c "$(wget -O- https://raw.githubusercontent.com/vngcloud/vmonitor-metrics-agent/main/install.sh)"
+   ```
+
+## Config file
+
+   Config file is stored in `/etc/telegraf/telegraf.conf` and `/etc/default/telegraf`
+
+## Start telegraf
+
+How to start Telegraf on Linux
+
 - Linux (sysvinit and upstart installations)
-  ```
-  sudo service telegraf start
-  ```
+
+   ```shell
+   sudo service telegraf start
+   ```
 
 - Linux (systemd installations)
-  ```
-  systemctl start telegraf
-  ```
 
-# windows
+   ```shell
+   systemctl start telegraf
+   ```
+
+## Log telegraf
+
+   ```shell
+   systemctl status telegraf
+   ```
+
+   ```shell
+   journalctl -xeu telegraf.service
+   ```
+
+<!-- ## Stop and remove telegraf
+
+   ```shell
+   systemctl stop telegraf
+   apt remove telegraf -y
+   rm /etc/telegraf/telegraf.conf
+   ``` -->
+
+# Windows
 
 ```
    [[outputs.vngcloud_vmonitor]]
@@ -33,7 +72,7 @@
       api_key = "<API_KEY>"
 ```
 
-> download https://github.com/vngcloud/vmonitor-metrics-agent/releases
+> download <https://github.com/vngcloud/vmonitor-metrics-agent/releases>
 
 ## Running Telegraf as a Windows Service
 
@@ -66,8 +105,10 @@ the general steps to set it up.
 ## Config Directory
 
 You can also specify a `--config-directory` for the service to use:
+
 1. Create a directory for config snippets: `C:\Program Files\Telegraf\telegraf.d`
 2. Include the `--config-directory` option when registering the service:
+
    ```
    > C:\"Program Files"\Telegraf\telegraf.exe --service install --config C:\"Program Files"\Telegraf\telegraf.conf --config-directory C:\"Program Files"\Telegraf\telegraf.d
    ```
