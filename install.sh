@@ -1,6 +1,8 @@
 #!/bin/bash
 
-DEFAULT_VERSION=1.23.0-1.4.0
+DEFAULT_VERSION=1.26.0-2.0.1
+DEFAULT_VMONITOR_SITE="monitoring-agent.vngcloud.vn"
+DEFAULT_IAM_URL="https://iamapis.vngcloud.vn/accounts-api/v2/auth/token"
 BASE_URL="https://github.com/vngcloud/vmonitor-metrics-agent/releases/download"
 
 if [ ! $VERSION ]; then
@@ -9,15 +11,26 @@ if [ ! $VERSION ]; then
   VERSION=$DEFAULT_VERSION
 fi
 
-if [ ! $API_KEY ]; then
-  printf "\033[31mAPI key not available in API_KEY environment variable.\033[0m\n"
+if [ ! $IAM_CLIENT_ID ]; then
+  printf "\033[31mIAM_CLIENT_ID not available in IAM_CLIENT_ID environment variable.\033[0m\n"
   exit 1;
 fi
 
+if [ ! $IAM_CLIENT_SECRET ]; then
+  printf "\033[31mIAM_CLIENT_SECRET not available in IAM_CLIENT_SECRET environment variable.\033[0m\n"
+  exit 1;
+fi
+
+if [ ! $IAM_URL ]; then
+  printf "\033[31mIAM_URL not available in IAM_URL environment variable.\033[0m\n"
+  printf "\033[31mDefault IAM_URL is $DEFAULT_IAM_URL.\033[0m\n"
+  IAM_URL=$DEFAULT_IAM_URL
+fi
+
 if [ ! $VMONITOR_SITE ]; then
-  printf "\033[31mSITE not available in VMONITOR_SITE environment variable.\033[0m\n"
-  printf "\033[31mDefault site is monitoring-agent.vngcloud.vn\033[0m\n"
-  VMONITOR_SITE=monitoring-agent.vngcloud.vn
+  printf "\033[31mVMONITOR_SITE not available in VMONITOR_SITE environment variable.\033[0m\n"
+  printf "\033[31mDefault site is $DEFAULT_VMONITOR_SITE.\033[0m\n"
+  VMONITOR_SITE=$DEFAULT_VMONITOR_SITE
 fi
 
 KNOWN_DISTRIBUTION="(Debian|Ubuntu|RedHat|CentOS|openSUSE|Amazon|Arista|SUSE)"
@@ -52,6 +65,13 @@ fi
 # 	command -v "$@" > /dev/null 2>&1
 # }
 
+# Upgrade config from API_KEY to IAM version
+if [ -e "/etc/telegraf/telegraf.conf" ]; then
+    if cat /etc/telegraf/telegraf.conf | grep -q "api_key = \"\${API_KEY\}\""; then
+        sed -i "s/api_key = \"\${API_KEY}\"/\nclient_id = \"\${IAM_CLIENT_ID}\"\n  client_secret = \"\${IAM_CLIENT_SECRET}\"\n  iam_url = \"\${IAM_URL}\"\n/g" /etc/telegraf/telegraf.conf
+    fi
+fi
+
 # Install the necessary package sources
 if [ $OS = "RedHat" ]; then
     echo -e "\033[34m\n* Installing RPM sources for vMonitor\n\033[0m"
@@ -68,7 +88,13 @@ if [ $OS = "RedHat" ]; then
     PACKAGE_NAME="telegraf-nightly.${ARCHI}.rpm"
     URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
     echo $URI
-    curl -L $URI -o /tmp/$PACKAGE_NAME
+    if command -v curl 2>/dev/null; then
+        curl -L $URI -o /tmp/$PACKAGE_NAME
+    else
+        rm -rf $PACKAGE_NAME
+        wget $URI
+        cp --remove-destination $PACKAGE_NAME /tmp/$PACKAGE_NAME
+    fi
 
     $sudo_cmd rpm -i /tmp/$PACKAGE_NAME
 
@@ -79,7 +105,13 @@ elif [ $OS = "Debian" ]; then
     PACKAGE_NAME="telegraf_nightly_${ARCHI}.deb"
     URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
     echo $URI
-    curl -L $URI -o /tmp/$PACKAGE_NAME
+    if command -v curl 2>/dev/null; then
+        curl -L $URI -o /tmp/$PACKAGE_NAME
+    else
+        rm -rf $PACKAGE_NAME
+        wget $URI
+        cp --remove-destination $PACKAGE_NAME /tmp/$PACKAGE_NAME
+    fi
     # curl -L "$BASE_URL/${VERSION}/${PACKAGE_NAME}" -o /tmp/$PACKAGE_NAME
     $sudo_cmd dpkg -i /tmp/$PACKAGE_NAME
     ERROR_MESSAGE=""
@@ -92,16 +124,20 @@ Please follow the instructions on the Agent setup page:
 fi
 
 # Set the configuration
-printf "\033[34m\n* Adding your API key to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
+printf "\033[34m\n* Adding ENV to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
 
-API_KEY_TEMP="$API_KEY"
+IAM_CLIENT_ID_TEMP="$IAM_CLIENT_ID"
+IAM_CLIENT_SECRET_TEMP="$IAM_CLIENT_SECRET"
+IAM_URL_TEMP="$IAM_URL"
 VMONITOR_SITE_TEMP="$VMONITOR_SITE"
 
 
-API_KEY="API_KEY=$API_KEY"
+IAM_CLIENT_ID="IAM_CLIENT_ID=$IAM_CLIENT_ID"
+IAM_CLIENT_SECRET="IAM_CLIENT_SECRET=$IAM_CLIENT_SECRET"
+IAM_URL="IAM_URL=$IAM_URL"
 VMONITOR_SITE="VMONITOR_SITE=$VMONITOR_SITE"
 
-list_env=( $API_KEY $VMONITOR_SITE)
+list_env=( $IAM_CLIENT_ID $IAM_CLIENT_SECRET $IAM_URL $VMONITOR_SITE)
 printf "%s\n" "${list_env[@]}" | $sudo_cmd tee /etc/default/telegraf
 
 # Backward compatible with vcmc
@@ -124,7 +160,9 @@ at:
     https://vmonitor.vngcloud.vn/infrastructure\033[0m
 Waiting for metrics..."
 
-export API_KEY=$API_KEY_TEMP
+export IAM_CLIENT_ID=$IAM_CLIENT_ID_TEMP
+export IAM_CLIENT_SECRET=$IAM_CLIENT_SECRET_TEMP
+export IAM_URL=$IAM_URL_TEMP
 export VMONITOR_SITE=$VMONITOR_SITE_TEMP
 
 telegraf --once
@@ -137,7 +175,7 @@ If you ever want to stop the Agent, run:
     sudo service telegraf stop
 And to run it again run:
     sudo service telegraf start
-API_KEY:
+config:
     /etc/telegraf/telegraf.conf
     /etc/default/telegraf
 \033[0m"
