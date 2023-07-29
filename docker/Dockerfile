@@ -13,7 +13,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" && \
       armel) ARCH='armel';; \
       *)     echo "Unsupported architecture: ${dpkgArch}"; exit 1;; \
     esac && \
-    wget --no-verbose wget --no-verbose https://github.com/vngcloud/vmonitor-metrics-agent/releases/download/${TELEGRAF_VERSION}/telegraf_nightly_${ARCH}.deb && \
+    wget --no-verbose https://github.com/vngcloud/vmonitor-metrics-agent/releases/download/${TELEGRAF_VERSION}/telegraf_nightly_${ARCH}.deb && \
     dpkg -i telegraf_nightly_${ARCH}.deb && \
     rm -f telegraf_nightly_${ARCH}.deb*
 
