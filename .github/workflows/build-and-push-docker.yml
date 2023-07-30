@@ -3,6 +3,12 @@ on:
   release:
     types: [published, created, edited]
   workflow_dispatch:
+    inputs:
+      push_to_hub:
+        description: 'Publish docker image to dockerhub'
+        required: false
+        default: false
+        type: boolean
 env:
   REPO_NAME: ${{ github.event.repository.name }}
 jobs:
@@ -37,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./docker
-          push: false
+          push: ${{ inputs.push_to_hub }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
   build-alpine:
@@ -72,6 +78,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./docker/alpine
-          push: false
+          push: ${{ inputs.push_to_hub }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
