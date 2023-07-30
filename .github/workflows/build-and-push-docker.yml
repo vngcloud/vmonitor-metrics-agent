@@ -46,21 +46,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-  
+      - name: Create image name env
+        run: |
+          echo "IMG_NAME=${{ vars.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}" >> $GITHUB_ENV
+      - name: debug
+        run: |
+          echo ${{ env.IMG_NAME }}
       - name: Docker metadata
         id: metadata
         uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ env.IMG_NAME }}/${{ env.HUB_USERNAME }}
+            ${{ env.IMG_NAME }}
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
+            type=semver,pattern={{version}}-alpine
+            type=semver,pattern={{major}}.{{minor}}-alpine
+            type=raw,value={{sha}}-alpine,enable=${{ github.ref_type != 'tag' }}
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
