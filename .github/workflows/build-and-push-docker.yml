@@ -1,7 +1,5 @@
 name: Build & push vMonitor-Metrics-Agent Docker Image
 on:
-  release:
-    types: [published, created, edited]
   workflow_dispatch:
     inputs:
       push_to_hub:
