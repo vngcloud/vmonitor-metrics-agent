@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEFAULT_VERSION=1.26.0-2.0.1
+DEFAULT_VERSION=1.26.0-2.0.2
 DEFAULT_VMONITOR_SITE="monitoring-agent.vngcloud.vn"
 DEFAULT_IAM_URL="https://iamapis.vngcloud.vn/accounts-api/v2/auth/token"
 BASE_URL="https://github.com/vngcloud/vmonitor-metrics-agent/releases/download"
