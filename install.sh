@@ -96,7 +96,7 @@ if [ $OS = "RedHat" ]; then
         cp --remove-destination $PACKAGE_NAME /tmp/$PACKAGE_NAME
     fi
 
-    $sudo_cmd rpm -i /tmp/$PACKAGE_NAME
+    $sudo_cmd rpm -ivh --force /tmp/$PACKAGE_NAME
 
 elif [ $OS = "Debian" ]; then
     printf "\033[34m\n* Installing the vMonitor Agent package\n\033[0m\n"
