@@ -116,6 +116,29 @@ elif [ $OS = "Debian" ]; then
     $sudo_cmd dpkg -i /tmp/$PACKAGE_NAME
     ERROR_MESSAGE=""
 
+elif [ $OS = "SUSE" ]; then
+    printf "\033[34m\n* Installing the vMonitor Agent package in SUSE\n\033[0m\n"
+
+    UNAME_M=$(uname -m)
+    if [ "$UNAME_M"  == "i686" -o "$UNAME_M"  == "i386" -o "$UNAME_M"  == "x86" ]; then
+        ARCHI="i386"
+    else
+        ARCHI="x86_64"
+    fi
+
+    PACKAGE_NAME="telegraf-nightly.${ARCHI}.rpm"
+    URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
+    echo $URI
+    if command -v curl 2>/dev/null; then
+        curl -L $URI -o /tmp/$PACKAGE_NAME
+    else
+        rm -rf $PACKAGE_NAME
+        wget $URI
+        cp --remove-destination $PACKAGE_NAME /tmp/$PACKAGE_NAME
+    fi
+
+    $sudo_cmd rpm -ivh --force --nodeps /tmp/$PACKAGE_NAME
+
 else
     printf "\033[31mYour OS or distribution are not supported by this install script.
 Please follow the instructions on the Agent setup page:
