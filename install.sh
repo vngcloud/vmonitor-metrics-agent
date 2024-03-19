@@ -141,8 +141,7 @@ elif [ $OS = "SUSE" ]; then
 
 else
     printf "\033[31mYour OS or distribution are not supported by this install script.
-Please follow the instructions on the Agent setup page:
-    https://app.vngcloud.vn/account/settings#agent\033[0m\n"
+Please contact VNGCLOUD support teams via: https://www.vngcloud.vn/contact\033[0m\n"
     exit;
 fi
 
